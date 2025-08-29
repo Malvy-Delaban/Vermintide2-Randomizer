@@ -1,0 +1,652 @@
+<!DOCTYPE HTML>
+<html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=IM+Fell+Double+Pica:ital@0;1&family=IM+Fell+French+Canon+SC&display=swap"
+    rel="stylesheet">
+<link rel="icon" type="image/x-icon" href="icon.ico">
+<title>Vermintide 2 Randomizer</title>
+
+<style type="text/css">
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    html {
+        background: url("background.jpg") no-repeat center center;
+        background-size: cover;
+    }
+
+    .logo {
+        position: absolute;
+        top: 2rem;
+        left: 4rem;
+        height: 15vh;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .main-container {
+        margin-top: 25vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .centered-portait {
+        height: 25vh;
+    }
+
+    .character-title {
+        font-family: "IM Fell Double Pica";
+        font-size: 2rem;
+        color: #392d25;
+        margin-bottom: 0.5rem;
+    }
+
+    .weapon-container {
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+    }
+
+    .weapon {
+        background-image: url("Assets/weapons/quality_background.png");
+        background-repeat: no-repeat;
+        background-size: cover;
+        height: 10vh;
+        width: 10vh;
+    }
+
+    .frame-weapon {
+        position: absolute;
+        height: 10vh;
+        width: 10vh;
+    }
+
+    .primary-weapon {
+        height: 10vh;
+        width: 10vh;
+    }
+
+    .randomize-button {
+        background-image: url("Assets/Misc/backgroundButton.png");
+        color: rgb(177, 158, 103);
+        font-family: "IM Fell Double Pica";
+        margin-top: 2rem;
+        font-size: 1.4rem;
+        padding: 1rem 3rem;
+        position: relative;
+        border: none;
+        cursor: pointer;
+    }
+
+    .randomize-button:hover {
+        color: rgb(241, 231, 200);
+        transition: 0.2ms;
+    }
+
+    .randomize-button::before,
+    .randomize-button::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 20px;
+        height: 100%;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+        z-index: 2;
+    }
+
+    .randomize-button::before {
+        left: 0;
+        background-image: url("Assets/Misc/SideBorderButton.png");
+        margin-left: -0.5rem;
+    }
+
+    .randomize-button::after {
+        right: 0;
+        background-image: url("Assets/Misc/SideBorderButton.png");
+        transform: scaleX(-1);
+        margin-right: -0.5rem;
+    }
+
+    .hover-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(161, 0, 0, 0.4), transparent);
+        opacity: 0;
+        transition: opacity 0.3s;
+        z-index: 1;
+    }
+
+    .hover-bg:hover {
+        opacity: 1;
+    }
+</style>
+
+<body>
+    <img class="logo" src="logo.png" alt="game-logo">
+    <div class="main-container">
+        <h2 class="character-title" id="career">-</h2>
+        <div class="portrait-container">
+            <img id="portrait" class="centered-portait" src="" alt="portrait">
+        </div>
+        <div class="weapon-container">
+            <div class="weapon">
+                <img class="frame-weapon" src="Assets/weapons/frame.png" alt="frame weapon">
+                <img id="primary" class="primary-weapon" src="Assets/weapons/saltzpyre/wh_dual_hammer.png"
+                    alt="primary weapon">
+            </div>
+            <div class="weapon">
+                <img class="frame-weapon" src="Assets/weapons/frame.png" alt="frame weapon">
+                <img id="secondary" class="primary-weapon" src="Assets/weapons/saltzpyre/wh_crossbow.png"
+                    alt="primary weapon">
+            </div>
+        </div>
+        <div class="button-container">
+            <button class="randomize-button" onclick="setBuild()">
+                <span class="hover-bg"></span>
+                Random Build
+            </button>
+        </div>
+    </div>
+</body>
+
+<script>
+    characters = [
+        {
+            name: "Saltzpyre",
+            careers: [
+                {
+                    name: "Witch Hunter Captain",
+                    primary_weapons: [
+                        "wh_fencing_sword",
+                        "wh_1h_falchion",
+                        "wh_1h_axe",
+                        "wh_2h_sword",
+                        "wh_1h_flail",
+                        "wh_2h_axe_falchon",
+                        "wh_2h_billhook",
+                    ],
+                    secondary_weapons: [
+                        "wh_brace_of_pistols",
+                        "wh_deus_01",
+                        "wh_crossbow_repeater",
+                        "wh_repeating_pistols",
+                        "wh_crossbow",
+                    ],
+                },
+                {
+                    name: "Bounty Hunter",
+                    primary_weapons: [
+                        "wh_fencing_sword",
+                        "wh_1h_falchion",
+                        "wh_1h_axe",
+                        "wh_2h_sword",
+                        "wh_1h_flail",
+                        "wh_2h_axe_falchon",
+                        "wh_2h_billhook",
+                    ],
+                    secondary_weapons: [
+                        "wh_brace_of_pistols",
+                        "wh_deus_01",
+                        "wh_crossbow_repeater",
+                        "wh_repeating_pistols",
+                        "wh_crossbow",
+                    ],
+                },
+                {
+                    name: "Zealot",
+                    primary_weapons: [
+                        "wh_fencing_sword",
+                        "wh_1h_falchion",
+                        "wh_1h_axe",
+                        "wh_2h_sword",
+                        "wh_1h_flail",
+                        "wh_2h_axe_falchon",
+                        "wh_2h_billhook",
+                        "wh_2h_hammer",
+                        "wh_dual_hammer",
+                        "wh_1h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "wh_brace_of_pistols",
+                        "wh_deus_01",
+                        "wh_crossbow_repeater",
+                        "wh_repeating_pistols",
+                        "wh_crossbow",
+                    ],
+                },
+                {
+                    name: "Warrior Priest of Sigmar",
+                    primary_weapons: [
+                        "wh_2h_hammer",
+                        "wh_dual_hammer",
+                        "wh_1h_hammer",
+                        "wh_flail_shield",
+                        "wh_hammer_book",
+                        "wh_hammer_shield",
+                    ],
+                    secondary_weapons: [
+                        "wh_2h_hammer",
+                        "wh_dual_hammer",
+                        "wh_1h_hammer",
+                        "wh_flail_shield",
+                        "wh_hammer_book",
+                        "wh_hammer_shield",
+                    ],
+                },
+            ]
+        },
+        {
+            name: "Bardin",
+            careers: [
+                {
+                    name: "Ranger Veteran",
+                    primary_weapons: [
+                        "dr_1h_hammer",
+                        "dr_2h_pick",
+                        "dr_shield_axe",
+                        "dr_1h_axe",
+                        "dr_shield_hammer",
+                        "dr_dual_hammer",
+                        "dr_2h_axe",
+                        "dr_2h_cog_hammer",
+                        "dr_2h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "dr_handgun",
+                        "dr_1h_throwing_axes",
+                        "dr_crossbow",
+                        "dr_steam_pistol",
+                        "dr_rakegun",
+                    ],
+                },
+                {
+                    name: "Iron Breaker",
+                    primary_weapons: [
+                        "dr_1h_hammer",
+                        "dr_2h_pick",
+                        "dr_shield_axe",
+                        "dr_1h_axe",
+                        "dr_shield_hammer",
+                        "dr_dual_hammer",
+                        "dr_2h_axe",
+                        "dr_2h_cog_hammer",
+                        "dr_2h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "dr_handgun",
+                        "dr_deus_01",
+                        "dr_crossbow",
+                        "dr_drakegun",
+                        "dr_drake_pistol",
+                        "dr_steam_pistol",
+                        "dr_rakegun",
+                    ],
+                },
+                {
+                    name: "Slayer",
+                    primary_weapons: [
+                        "dr_1h_hammer",
+                        "dr_2h_pick",
+                        "dr_1h_axe",
+                        "dr_dual_hammer",
+                        "dr_2h_axe",
+                        "dr_2h_cog_hammer",
+                        "dr_dual_wield_axes",
+                        "dr_2h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "dr_1h_hammer",
+                        "dr_2h_pick",
+                        "dr_1h_axe",
+                        "dr_dual_hammer",
+                        "dr_2h_axe",
+                        "dr_2h_cog_hammer",
+                        "dr_dual_wield_axes",
+                        "dr_2h_hammer",
+                        "dr_1h_throwing_axes",
+                    ],
+                },
+                {
+                    name: "Outcast Engineer",
+                    primary_weapons: [
+                        "dr_1h_hammer",
+                        "dr_2h_pick",
+                        "dr_shield_axe",
+                        "dr_1h_axe",
+                        "dr_shield_hammer",
+                        "dr_dual_hammer",
+                        "dr_2h_axe",
+                        "dr_2h_cog_hammer",
+                        "dr_2h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "dr_handgun",
+                        "dr_deus_01",
+                        "dr_drakegun",
+                        "dr_drake_pistol",
+                        "dr_steam_pistol",
+                        "dr_rakegun",
+                    ],
+                },
+            ]
+        },
+        {
+            name: "Kerillian",
+            careers: [
+                {
+                    name: "Waystalker",
+                    primary_weapons: [
+                        "we_dual_wield_sword_dagger",
+                        "we_dual_wield_daggers",
+                        "we_2h_glaive",
+                        "we_1h_sword",
+                        "we_spear",
+                        "we_2h_axe",
+                        "we_dual_wield_swords",
+                        "we_2h_sword",
+                    ],
+                    secondary_weapons: [
+                        "we_deus_01",
+                        "we_shortbow_hagbane",
+                        "we_javelin",
+                        "we_shortbow",
+                        "we_longbow",
+                    ],
+                },
+                {
+                    name: "Handmaiden",
+                    primary_weapons: [
+                        "we_dual_wield_sword_dagger",
+                        "we_dual_wield_daggers",
+                        "we_2h_glaive",
+                        "we_1h_sword",
+                        "we_shield_spear",
+                        "we_spear",
+                        "we_2h_axe",
+                        "we_dual_wield_swords",
+                        "we_2h_sword",
+                    ],
+                    secondary_weapons: [
+                        "we_deus_01",
+                        "we_shortbow_hagbane",
+                        "we_javelin",
+                        "we_shortbow",
+                        "we_longbow",
+                    ],
+                },
+                {
+                    name: "Shade",
+                    primary_weapons: [
+                        "we_dual_wield_sword_dagger",
+                        "we_dual_wield_daggers",
+                        "we_2h_glaive",
+                        "we_1h_sword",
+                        "we_spear",
+                        "we_2h_axe",
+                        "we_dual_wield_swords",
+                        "we_2h_sword",
+                    ],
+                    secondary_weapons: [
+                        "we_deus_01",
+                        "we_shortbow_hagbane",
+                        "we_crossbow_repeater",
+                        "we_javelin",
+                        "we_shortbow",
+                        "we_longbow",
+                    ],
+                },
+                {
+                    name: "Sister of the Thorn",
+                    primary_weapons: [
+                        "we_dual_wield_sword_dagger",
+                        "we_dual_wield_daggers",
+                        "we_2h_glaive",
+                        "we_1h_sword",
+                        "we_spear",
+                        "we_2h_axe",
+                        "we_dual_wield_swords",
+                        "we_2h_sword",
+                    ],
+                    secondary_weapons: [
+                        "we_deus_01",
+                        "we_life_staff",
+                        "we_shortbow_hagbane",
+                        "we_javelin",
+                        "we_shortbow",
+                        "we_longbow",
+                    ],
+                },
+            ]
+        },
+        {
+            name: "Kruber",
+            careers: [
+                {
+                    name: "Mercenary",
+                    primary_weapons: [
+                        "es_1h_mace",
+                        "es_1h_sword",
+                        "es_2h_sword_executioner",
+                        "es_sword_shield",
+                        "es_mace_shield",
+                        "es_bastard_sword",
+                        "es_sword_mace",
+                        "es_deus_01",
+                        "es_2h_spear",
+                        "es_halberd",
+                        "es_2h_sword",
+                        "es_2h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "es_handgun",
+                        "es_repeating_handgun",
+                        "es_blunderbuss",
+                    ],
+                },
+                {
+                    name: "Huntsman",
+                    primary_weapons: [
+                        "es_1h_mace",
+                        "es_1h_sword",
+                        "es_2h_sword_executioner",
+                        "es_sword_shield",
+                        "es_mace_shield",
+                        "es_bastard_sword",
+                        "es_sword_mace",
+                        "es_deus_01",
+                        "es_2h_spear",
+                        "es_halberd",
+                        "es_2h_sword",
+                        "es_2h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "es_handgun",
+                        "es_longbow",
+                        "es_repeating_handgun",
+                        "es_blunderbuss",
+                    ],
+                },
+                {
+                    name: "Foot Knight",
+                    primary_weapons: [
+                        "es_1h_mace",
+                        "es_1h_sword",
+                        "es_2h_sword_executioner",
+                        "es_sword_shield",
+                        "es_mace_shield",
+                        "es_bastard_sword",
+                        "es_sword_mace",
+                        "es_deus_01",
+                        "es_halberd",
+                        "es_2h_sword",
+                        "es_2h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "es_handgun",
+                        "es_repeating_handgun",
+                        "es_blunderbuss",
+                    ],
+                },
+                {
+                    name: "Grail Knight",
+                    primary_weapons: [
+                        "es_1h_mace",
+                        "es_1h_sword",
+                        "es_2h_sword_executioner",
+                        "es_sword_shield",
+                        "es_mace_shield",
+                        "es_bastard_sword",
+                        "es_sword_mace",
+                        "es_sword_shield_breton",
+                        "es_2h_sword",
+                        "es_2h_hammer",
+                    ],
+                    secondary_weapons: [
+                        "es_1h_mace",
+                        "es_1h_sword",
+                        "es_2h_sword_executioner",
+                        "es_sword_shield",
+                        "es_mace_shield",
+                        "es_bastard_sword",
+                        "es_sword_mace",
+                        "es_sword_shield_breton",
+                        "es_2h_sword",
+                        "es_2h_hammer",
+                    ],
+                },
+            ]
+        },
+        {
+            name: "Sienna",
+            careers: [
+                {
+                    name: "Battle Wizard",
+                    primary_weapons: [
+                        "bw_crowbill",
+                        "bw_sword",
+                        "bw_1h_mace",
+                        "bw_flame_sword",
+                        "bw_glail",
+                        "bw_dagger",
+                        "bw_reaper",
+                    ],
+                    secondary_weapons: [
+                        "bw_skullstaff_beam",
+                        "bw_skullstaff_flamethrower",
+                        "bw_deus_01",
+                        "bw_skullstaff_fireball",
+                        "bw_skullstaff_spear",
+                        "bw_skullstaff_geiser",
+                    ],
+                },
+                {
+                    name: "Pyromancer",
+                    primary_weapons: [
+                        "bw_crowbill",
+                        "bw_sword",
+                        "bw_1h_mace",
+                        "bw_flame_sword",
+                        "bw_glail",
+                        "bw_dagger",
+                        "bw_reaper",
+                    ],
+                    secondary_weapons: [
+                        "bw_skullstaff_beam",
+                        "bw_skullstaff_flamethrower",
+                        "bw_deus_01",
+                        "bw_skullstaff_fireball",
+                        "bw_skullstaff_spear",
+                        "bw_skullstaff_geiser",
+                    ],
+                },
+                {
+                    name: "Unchained",
+                    primary_weapons: [
+                        "bw_crowbill",
+                        "bw_sword",
+                        "bw_1h_mace",
+                        "bw_flame_sword",
+                        "bw_glail",
+                        "bw_dagger",
+                        "bw_reaper",
+                    ],
+                    secondary_weapons: [
+                        "bw_skullstaff_beam",
+                        "bw_skullstaff_flamethrower",
+                        "bw_deus_01",
+                        "bw_skullstaff_fireball",
+                        "bw_skullstaff_spear",
+                        "bw_skullstaff_geiser",
+                    ],
+                },
+                {
+                    name: "Necromancer",
+                    primary_weapons: [
+                        "bw_crowbill",
+                        "bw_sword",
+                        "bw_1h_mace",
+                        "bw_flame_sword",
+                        "bw_glail",
+                        "bw_dagger",
+                        "bw_reaper",
+                    ],
+                    secondary_weapons: [
+                        "bw_skullstaff_beam",
+                        "bw_deus_01",
+                        "bw_skullstaff_fireball",
+                        "bw_skullstaff_spear",
+                        "bw_skullstaff_geiser",
+                        "bw_soulsteal",
+                    ],
+                },
+            ]
+        },
+    ];
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+
+    function setBuild() {
+        const charaId = getRandomInt(characters.length);
+        const careerId = getRandomInt(characters[charaId].careers.length);
+        const primaryId = getRandomInt(characters[charaId].careers[careerId].primary_weapons.length);
+        const secondaryId = getRandomInt(characters[charaId].careers[careerId].secondary_weapons.length);
+        var careerPortraitPath = characters[charaId].careers[careerId].name;
+        careerPortraitPath = "Assets/characters/" + careerPortraitPath.replace(/\s/g, '').toLowerCase() + ".png";
+        var primaryPath = "Assets/weapons/" + characters[charaId].name.toLowerCase() + "/" + characters[charaId].careers[careerId].primary_weapons[primaryId] + ".png";
+        var secondaryPath = "Assets/weapons/" + characters[charaId].name.toLowerCase() + "/" + characters[charaId].careers[careerId].secondary_weapons[secondaryId] + ".png";
+
+        const portrait = document.getElementById("portrait");
+        portrait.src = careerPortraitPath;
+
+        const career = document.getElementById("career");
+        career.innerHTML = characters[charaId].careers[careerId].name;
+
+        const primary = document.getElementById("primary");
+        primary.src = primaryPath;
+
+        const secondary = document.getElementById("secondary");
+        secondary.src = secondaryPath;
+    }
+
+    setBuild();
+</script>
+
+</html>
